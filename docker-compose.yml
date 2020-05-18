@@ -1,0 +1,47 @@
+
+version: '3.5'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - type: bind
+        source: ./db
+        target: /data/db
+
+  feeder:
+    build: ./feeder
+    restart: always
+    volumes:
+      - type: bind
+        source: ./ids
+        target: /usr/src/app/channel_ids
+
+  downloader:
+    build: ./downloader
+    volumes:
+      - type: bind
+        source: ./videos
+        target: /usr/src/app/videos
+
+  hosting:
+    image: nginx
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+     - type: bind
+       source: ./videos
+       target: /usr/share/nginx/html
+
+  transcriber:
+    build: ./transcriber
+    volumes:
+      - type: bind
+        source: ./videos
+        target: /usr/src/app/videos
