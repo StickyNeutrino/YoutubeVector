@@ -38,3 +38,10 @@ services:
      - type: bind
        source: ./videos
        target: /usr/share/nginx/html
+
+  transcriber:
+    build: ./transcriber
+    volumes:
+      - type: bind
+        source: ./videos
+        target: /usr/src/app/videos

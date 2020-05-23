@@ -1,7 +1,7 @@
 FROM python
 
 WORKDIR /usr/src/app
-RUN apt-get update && apt-get install -y swig libpulse-dev libasound2-dev
+RUN apt-get update && apt-get install -y swig libpulse-dev libasound2-dev ffmpeg
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
 
