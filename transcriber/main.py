@@ -4,13 +4,10 @@ from time import sleep
 from os import listdir, path
 from subprocess import run, DEVNULL
 
-print('started')
-
 client = MongoClient(
     'mongodb://mongo:27017/',
     username = "root",
     password = "example")
-print('connected to db')
 
 videos = client.youtube.videos
 
@@ -20,21 +17,19 @@ def transcribe(audiofile):
         .hypothesis()
 
 skipList = []
-while 1:
-    print("Starting")
+def run():
     for video in videos.find({'text': None}):
         id = video['yt_videoid']
         if id + '.mp4' in listdir('./videos') \
         and id not in skipList:
-            sleep(5)
-            print('transcribing:', id)
             try:
-                videos.update_one({'id': video['id']} , {'$set': {'text': '*'}})
                 run(['ffmpeg', '-y', '-i', './videos/' + id + '.mp4', '-acodec', 'pcm_s16le', '-f', 's16le', '-ac', '1', '-ar', '16000', './tmp.raw'], stderr=DEVNULL, stdout=DEVNULL)
                 text = transcribe('./tmp.raw')
                 videos.update_one({'id': video['id']} , {'$set': {'text': text}})
             except:
-                print('skipping:', id)
                 skipList.append(id)
-    print('sleeping')
+
+
+while 1:
+    run()
     sleep(10)
