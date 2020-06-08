@@ -35,3 +35,6 @@ services:
       - type: bind
         source: ./videos
         target: /usr/src/app/videos
+
+  pipeline:
+    build: ./pipeline
