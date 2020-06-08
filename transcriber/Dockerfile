@@ -9,4 +9,6 @@ COPY main.py ./
 
 RUN mkdir ./videos
 
-ENTRYPOINT [ "python", "-u", "./main.py" ]
+EXPOSE 80
+
+ENTRYPOINT [ "uvicorn", "main:app", "--host", "0.0.0.0" ]

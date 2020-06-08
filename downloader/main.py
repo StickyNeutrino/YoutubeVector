@@ -1,38 +1,28 @@
-from pymongo import MongoClient, errors
-from pytube import YouTube
-from time import sleep
 from os import listdir
+from fastapi import FastAPI
 
-print('started')
-sleep(7)
+def videoExists(id):
+    id + '.mp4' in listdir('./videos')
 
-client = MongoClient(
-    'mongodb://mongo:27017/',
-    username = "root",
-    password = "example")
-print('connected to db')
+def download(id):
+    from pytube import YouTube
+    if not videoExists(id):
+        try:
+            YouTube('https://youtu.be/' + id) \
+            .streams \
+            .filter(progressive=True, file_extension='mp4') \
+            .order_by('resolution') \
+            .desc() \
+            .first() \
+            .download(output_path='./videos', filename=id)
+            return True
+        except:
+            return False
+    return True
 
-videos = client.youtube.videos
 
-skipList = []
-while 1:
-    print("Starting")
-    for video in videos.find():
-        id = video['yt_videoid']
-        if id + '.mp4' not in listdir('./videos') \
-        and id not in skipList:
-            sleep(5)
-            print('downloading:', id)
-            try:
-                YouTube('https://youtu.be/' + id) \
-                .streams \
-                .filter(progressive=True, file_extension='mp4') \
-                .order_by('resolution') \
-                .desc() \
-                .first() \
-                .download(output_path='./videos', filename=id)
-            except:
-                print('skipping:', id)
-                skipList.append(id)
-    print('sleeping')
-    sleep(60 * 17)
+app = FastAPI()
+
+@app.get("/download/{video_id}")
+def download_endpoint(video_id: str):
+    return { 'success': download(video_id) }
