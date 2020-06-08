@@ -19,9 +19,7 @@ while 1:
                 if videos.find({'id': entry["id"]}).limit(1).count() == 0:
                     print('New:', entry['id'])
                     videos.insert(entry)
-                    requests.get('http://downloader:8000/download/' + entry['yt_videoid'])
-                    resp = requests.get('http://transcriber:8000/transcribe/' + entry['yt_videoid'])
-                    print(resp.json())
+                    requests.get('http://pipeline:8000/video2vec/' + entry['yt_videoid'])
                     #index video jn
     print('sleeping')
     sleep( 60 )
