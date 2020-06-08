@@ -1,24 +1,37 @@
 import os
 import gensim.models as g
-
+import codecs
+from nltk.tokenize import word_tokenize
 
 def train_model(train_data):
     #doc2vec parameters
     vector_size = 300
-    window_size = 15
     min_count = 2
-    sampling_threshold = 1e-5
-    negative_size = 5
-    train_epoch = 100
+    train_epoch = 50
     dm = 0
-    worker_count = 1 #number of parallel processes
 
     #output model
-    saved_path = "model"
+    saved_path = "d2v.model"
 
     #train doc2vec model
-    docs = g.doc2vec.TaggedLineDocument(train_data)
-    model = g.Doc2Vec(docs, size=vector_size, window=window_size, min_count=min_count, sample=sampling_threshold, workers=worker_count, hs=0, dm=dm, negative=negative_size, dbow_words=1, dm_concat=1, iter=train_epoch)
+    docs = [g.doc2vec.TaggedDocument(doc, [i]) for i, doc in enumerate(train_data)]
+    model = g.Doc2Vec(docs, size=vector_size, min_count=min_count, dm=dm, dbow_words=1, dm_concat=1, epochs=train_epoch)
 
     #save model
     model.save(saved_path)
+
+def test_model(test_data):
+    #parameters
+    model="d2v.model"
+    output_file="test_vectors.txt"
+
+    #load model
+    m = g.Doc2Vec.load(model)
+    test_docs = [word_tokenize(doc) for doc in test_data]
+
+    #infer test vectors
+    output = open(output_file, "w")
+    for d in test_docs:
+        output.write( " ".join([str(x) for x in m.infer_vector(d)]) + "\n" )
+    output.flush()
+    output.close()

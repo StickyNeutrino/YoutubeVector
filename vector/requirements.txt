@@ -1,3 +1,4 @@
 pymongo
 gensim
-smart_open
+codecs
+nltk
