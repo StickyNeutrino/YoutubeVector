@@ -1,7 +1,8 @@
 import feedparser
 from pymongo import MongoClient
 from time import sleep
-sleep(30)
+import requests
+
 print('connecting')
 client = MongoClient(
     'mongodb://mongo:27017/',
@@ -18,5 +19,9 @@ while 1:
                 if videos.find({'id': entry["id"]}).limit(1).count() == 0:
                     print('New:', entry['id'])
                     videos.insert(entry)
+                    requests.get('http://downloader:8000/download/' + entry['yt_videoid'])
+                    resp = requests.get('http://transcriber:8000/transcribe/' + entry['yt_videoid'])
+                    print(resp.json())
+                    #index video jn
     print('sleeping')
-    sleep( 60 * 31 )
+    sleep( 60 )

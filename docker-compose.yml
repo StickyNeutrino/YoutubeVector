@@ -29,16 +29,6 @@ services:
         source: ./videos
         target: /usr/src/app/videos
 
-  hosting:
-    image: nginx
-    restart: always
-    ports:
-      - 80:80
-    volumes:
-     - type: bind
-       source: ./videos
-       target: /usr/share/nginx/html
-
   transcriber:
     build: ./transcriber
     volumes:

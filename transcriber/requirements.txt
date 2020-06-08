@@ -1,2 +1,4 @@
 pymongo
 pocketsphinx
+fastapi
+uvicorn
