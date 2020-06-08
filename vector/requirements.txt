@@ -1,0 +1,3 @@
+pymongo
+gensim
+smart_open

@@ -3,6 +3,7 @@ from pocketsphinx import AudioFile, get_model_path, get_data_path, Pocketsphinx
 from time import sleep
 from os import listdir, path
 from subprocess import run, DEVNULL
+from __future__ import print_function
 
 print('started')
 
