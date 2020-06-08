@@ -9,7 +9,7 @@ client = MongoClient(
 
 app = FastAPI()
 
-@app.get("/doc2vec/{video_id}")
+@app.get("/video2vec/{video_id}")
 def pipeline_endpoint(video_id: str):
     requests.get('http://downloader:8000/download/' + video_id)
     resp = requests.get('http://transcriber:8000/transcribe/' + video_id)
