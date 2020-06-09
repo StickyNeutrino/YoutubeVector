@@ -1,3 +1,3 @@
 touch ids
-mkdir videos
+mkdir videos transcripts
 mkdir db

@@ -1,1 +1,1 @@
-sudo rm -rf videos db
+sudo rm -rf videos db transcripts
