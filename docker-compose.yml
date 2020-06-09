@@ -42,3 +42,10 @@ services:
 
   pipeline:
     build: ./pipeline
+
+  vector:
+    build: ./vector
+    volumes:
+      - type: bind
+        source: ./transcripts
+        target: /usr/src/app/transcripts
