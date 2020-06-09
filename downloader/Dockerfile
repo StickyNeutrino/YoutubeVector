@@ -9,6 +9,6 @@ EXPOSE 80
 
 COPY main.py ./
 
-RUN mkdir ./videos
+RUN mkdir ./videos ./transcripts
 
 ENTRYPOINT [ "uvicorn", "main:app", "--host", "0.0.0.0" ]
