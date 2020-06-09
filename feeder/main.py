@@ -10,6 +10,9 @@ client = MongoClient(
 print('connected')
 videos = client.youtube.videos
 
+def pipeline(id):
+    requests.get('http://pipeline:8000/video2vec/' + id)
+
 while 1:
     print('starting')
     with open('./channel_ids', 'r') as channel_ids:
@@ -19,7 +22,6 @@ while 1:
                 if videos.find({'id': entry["id"]}).limit(1).count() == 0:
                     print('New:', entry['id'])
                     videos.insert(entry)
-                    requests.get('http://pipeline:8000/video2vec/' + entry['yt_videoid'])
-                    #index video jn
+                    pipeline(entry['yt_videoid'])
     print('sleeping')
     sleep( 60 )
