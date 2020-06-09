@@ -1,4 +1,6 @@
 pymongo
 gensim
-codecs
 nltk
+uvicorn
+fastapi
+pysrt
