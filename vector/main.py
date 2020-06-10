@@ -7,6 +7,7 @@ from pymongo import MongoClient
 import random
 corpus = []
 import pysrt
+from fastapi import FastAPI
 
 nltk.download('punkt')
 
@@ -27,47 +28,46 @@ def train_model(train_data):
     #save model
     model.save(saved_path)
 
-def test_model(test_data):
+def similar(id):
+    text = ''
+    for sub in pysrt.open('./transcripts/' + id + '.srt'):
+        text += sub.text + ' '
     #parameters
     model_path="d2v.model"
     #load model
     model = g.Doc2Vec.load(model_path)
-    test_docs = [word_tokenize(doc) for doc in test_data]
 
-    #From doc2vec page
-    # Pick a random document from the test corpus and infer a vector from the model
-    doc_id = random.randint(0, len(test_docs) - 1)
-    inferred_vector = model.infer_vector(test_docs[doc_id])
-    sims = model.docvecs.most_similar([inferred_vector], topn=len(model.docvecs))
+    inferred_vector = model.infer_vector(word_tokenize(text))
+    sims = model.docvecs.most_similar([inferred_vector], topn=4)
 
+    lines = open("./trained_ids.txt").readlines()
+    print(lines)
+    print(sims)
+    return {"one": lines[sims[0][0]],"two": lines[sims[1][0]],"three": lines[sims[2][0]]}
 
-    shwolen = 500
-    # Compare and print the most/median/least similar documents from the train corpus
-    doc = corpus[doc_id]
-    if len(doc) > shwolen:
-        doc = doc[:shwolen]
+def train():
+    corpus = []
+    trained_ids = []
+    for transcript in os.listdir('./transcripts'):
+        text = ''
+        for sub in pysrt.open('./transcripts/' + transcript):
+            text += sub.text + ' '
+        corpus.append(text)
+        trained_ids.append(transcript.split('.')[0])
 
-    print('Test Document ({}): «{}»\n'.format(doc_id, doc))
-    print(u'SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
-    for label, index in [('MOST', 1), ('SECOND', 2), ('LEAST', len(sims) - 1)]:
-        text = corpus[sims[index][0]]
-        if len(text) > shwolen:
-            text = text[:shwolen]
-        print(u'%s %s: «%s»\n' % (label, sims[index], text))
+    train_model(corpus)
+    id_file = open('./trained_ids.txt', 'w')
+    for id in trained_ids:
+        id_file.write(id + '\n')
+    id_file.close()
 
-client = MongoClient(
-    'mongodb://mongo:27017/',
-    username="root", password="example")
+app = FastAPI()
 
-transcripts = client.youtube.transcripts
+@app.get("/train/")
+def train_endpoint():
+    train()
+    return { 'ok': True }
 
-corpus = []
-for transcript in os.listdir('./transcripts'):
-    text = ''
-    for sub in pysrt.open('./transcripts/' + transcript):
-        text += sub.text + ' '
-    corpus.append(text)
-
-train_model(corpus)
-for i in range(5):
-    test_model(corpus)
+@app.get("/similar/{video_id}")
+def similar_endpoint(video_id: str):
+    return similar(video_id)
