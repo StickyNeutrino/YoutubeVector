@@ -13,7 +13,7 @@ app = FastAPI()
 
 @app.get("/video2vec/{video_id}")
 def pipeline_endpoint(video_id: str):
-    requests.get('http://downloader:8000/download/' + video_id)
+    requests.get('http://downloader:8000/caption/' + video_id)
     return
     '''
     transcript = transcripts.find_one({'id': video_id})
