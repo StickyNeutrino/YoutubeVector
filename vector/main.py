@@ -40,11 +40,20 @@ def test_model(test_data):
     inferred_vector = model.infer_vector(test_docs[doc_id])
     sims = model.docvecs.most_similar([inferred_vector], topn=len(model.docvecs))
 
+
+    shwolen = 500
     # Compare and print the most/median/least similar documents from the train corpus
-    print('Test Document ({}): «{}»\n'.format(doc_id, ' '.join(corpus[doc_id])))
+    doc = corpus[doc_id]
+    if len(doc) > shwolen:
+        doc = doc[:shwolen]
+
+    print('Test Document ({}): «{}»\n'.format(doc_id, doc))
     print(u'SIMILAR/DISSIMILAR DOCS PER MODEL %s:\n' % model)
     for label, index in [('MOST', 1), ('SECOND', 2), ('LEAST', len(sims) - 1)]:
-        print(u'%s %s: «%s»\n' % (label, sims[index], ' '.join(corpus[sims[index][0]])))
+        text = corpus[sims[index][0]]
+        if len(text) > shwolen:
+            text = text[:shwolen]
+        print(u'%s %s: «%s»\n' % (label, sims[index], text))
 
 client = MongoClient(
     'mongodb://mongo:27017/',
@@ -56,7 +65,7 @@ corpus = []
 for transcript in os.listdir('./transcripts'):
     text = ''
     for sub in pysrt.open('./transcripts/' + transcript):
-        text += sub.text
+        text += sub.text + ' '
     corpus.append(text)
 
 train_model(corpus)
