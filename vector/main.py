@@ -3,7 +3,6 @@ import gensim.models as g
 import codecs
 from nltk.tokenize import word_tokenize
 import nltk
-from pymongo import MongoClient
 import random
 corpus = []
 import pysrt

@@ -1,13 +1,6 @@
-from pymongo import MongoClient
 from fastapi import FastAPI
 from time import sleep
 import requests
-
-client = MongoClient(
-    'mongodb://mongo:27017/',
-    username="root", password="example")
-
-transcripts = client.youtube.transcripts
 
 app = FastAPI()
 

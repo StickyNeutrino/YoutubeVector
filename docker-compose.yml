@@ -3,17 +3,6 @@ version: '3.5'
 
 services:
 
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - type: bind
-        source: ./db
-        target: /data/db
-
   feeder:
     build: ./feeder
     restart: always
@@ -51,7 +40,7 @@ services:
       - type: bind
         source: ./transcripts
         target: /usr/src/app/transcripts
-  
+
   frontend:
     build:
       context: ./frontend/
