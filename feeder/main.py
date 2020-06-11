@@ -1,16 +1,9 @@
 import feedparser
-from pymongo import MongoClient
 from time import sleep
 import requests
 
-print('connecting')
-client = MongoClient(
-    'mongodb://mongo:27017/',
-    username="root", password="example")
-print('connected')
-videos = client.youtube.videos
 
-def pipeline(id):
+def download(id):
     requests.get('http://pipeline:8000/video2vec/' + id)
 
 while 1:
@@ -19,9 +12,6 @@ while 1:
         for id in channel_ids:
             raw = feedparser.parse('https://www.youtube.com/feeds/videos.xml?channel_id=' + id)
             for entry in raw['entries']:
-                if videos.find({'id': entry["id"]}).limit(1).count() == 0:
-                    print('New:', entry['id'])
-                    videos.insert(entry)
-                    pipeline(entry['yt_videoid'])
+                download(entry['yt_videoid'])
     print('sleeping')
     sleep( 60 )
