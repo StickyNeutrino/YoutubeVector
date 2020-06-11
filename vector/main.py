@@ -8,6 +8,7 @@ import random
 corpus = []
 import pysrt
 from fastapi import FastAPI
+import requests
 
 nltk.download('punkt')
 
@@ -70,4 +71,5 @@ def train_endpoint():
 
 @app.get("/similar/{video_id}")
 def similar_endpoint(video_id: str):
+    print( requests.get('http://downloader:8000/caption/' + video_id).json())
     return similar(video_id)
