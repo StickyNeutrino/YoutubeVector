@@ -44,9 +44,9 @@ services:
   frontend:
     build:
       context: ./frontend/
-    command: npm start
+    command: serve -s build
     volumes:
       - ./frontend/:/usr/app
       - /usr/app/node_modules
     ports:
-      - "3000:3000"
+      - 5000:5000
