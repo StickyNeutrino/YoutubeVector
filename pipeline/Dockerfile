@@ -9,6 +9,4 @@ COPY main.py ./
 
 RUN mkdir ./videos
 
-EXPOSE 80
-
 ENTRYPOINT [ "uvicorn", "main:app", "--host", "0.0.0.0" ]
