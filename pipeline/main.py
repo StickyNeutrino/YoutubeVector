@@ -15,7 +15,7 @@ app = FastAPI()
 def pipeline_endpoint(video_id: str):
     requests.get('http://downloader:8000/caption/' + video_id)
     return
-    '''
+    ''' FIXME: to enable transcription
     transcript = transcripts.find_one({'id': video_id})
     text = ''
     if not transcript:
